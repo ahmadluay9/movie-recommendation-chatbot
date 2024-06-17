@@ -39,7 +39,7 @@ st.sidebar.markdown('''
 
 user_option = st.sidebar.radio('Movie or TV Show ?',['Movie','TV Show'])
 
-st.image('tmdb.jpeg')
+st.image('tmdb.jpeg',width=800)
 
 if user_option=='TV Show':
     user_option = 'tv'
@@ -78,7 +78,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
             # Display each found image
             matches = re.findall(pattern, ai_response)
             for match in matches:
-                st.image(base_url + match)
+                st.image(base_url + match,width=450)
             matches = re.findall(pattern, ai_response)
             st.write(ai_response)
     
