@@ -2,7 +2,8 @@
 This project aims to develop an movie / tv show recommendation chatbot that returns a list of recommended movie / tv show based on users preferences.
 
 ## Application Demo
-![movie-recommendation-gif](https://github.com/ahmadluay9/movie-recommendation-chatbot/assets/123846438/6c378833-4b77-4e55-9083-61a761ee4dd0)
+![movie-recommendation-gif](https://github.com/ahmadluay9/movie-recommendation-chatbot/assets/123846438/7727838e-e2a8-496a-b49c-cbb114727154)
+
 
 ## File Explanation
 This repository consists of several files :
