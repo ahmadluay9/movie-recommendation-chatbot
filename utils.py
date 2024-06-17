@@ -2,7 +2,6 @@ import os
 import requests
 import pandas as pd
 import tiktoken
-from dotenv import load_dotenv
 
 from langchain.chains import RetrievalQA, ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
@@ -12,13 +11,6 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
-
-# Load environment variables from .env
-load_dotenv()
-
-# Access the OpenAI API key
-OPENAI_API_KEY = os.getenv("MY_OPENAI_KEY")
-TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
 def fetch_data(user):
     if user == 'movie':
