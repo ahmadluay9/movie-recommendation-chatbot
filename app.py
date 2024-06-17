@@ -46,7 +46,6 @@ else:
     user_option = 'movie'
     st.header("Movie Recommendation ChatBot")
 
-st.image('tmdb.jpeg',width=450)
 st.write('---')
 
 df = fetch_data(user_option)
