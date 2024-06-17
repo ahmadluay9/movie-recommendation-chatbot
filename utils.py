@@ -1,6 +1,7 @@
 import os
 import requests
 import pandas as pd
+import tiktoken
 from dotenv import load_dotenv
 
 from langchain.chains import RetrievalQA
