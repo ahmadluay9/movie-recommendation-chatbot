@@ -25,8 +25,13 @@ This repository consists of several files :
 - `utils.py`: A script containing utility functions or helper methods used by the main application
 
 ## Setup
-1. Create a `.env` file containing:
+1. Create a `.env` file containing the API key as below:
 ```
     OPENAI_API_KEY=
     TMDB_API_KEY=
 ```
+2. Run streamlit
+```
+streamlit run app.py
+```
+3. Open http://localhost:8501
