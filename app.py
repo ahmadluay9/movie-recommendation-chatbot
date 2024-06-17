@@ -4,6 +4,7 @@ import streamlit as st
 from dataclasses import dataclass
 from utils import fetch_data, loader, model_embedding, setup_chain, run_chain
 from dotenv import load_dotenv
+import re
 
 # Load environment variables from .env
 load_dotenv()
@@ -11,6 +12,12 @@ load_dotenv()
 # Access the OpenAI API key
 OPENAI_API_KEY = os.getenv("MY_OPENAI_KEY")
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+
+# Define the base URL for the images
+base_url = "https://image.tmdb.org/t/p/original/"
+
+# Use regular expression to find all jpg paths in the ai_response
+pattern = r"Poster Path: (/[a-zA-Z0-9_/.-]+\.jpg)"
 
 # Set the page config
 st.set_page_config(layout="wide")
@@ -42,121 +49,48 @@ else:
 df = fetch_data(user_option)
 loader(df)
 model_embedding()
-chain = setup_chain(OPENAI_API_KEY,df)
+chain = setup_chain(df)
 
-# Constants for chat actors
-USER = "user"
-ASSISTANT = "assistant"
+# set initial message
+if "messages" not in st.session_state.keys():
+    st.session_state["messages"] = [
+        {"role":"assistant","content":"Hello, how can i help you today?"}]
 
-@dataclass
-class Message:
-    actor: str
-    payload: str
+# Display messages
+if "messages" in st.session_state.keys(): 
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
 
-# Initialize session state
-if "messages" not in st.session_state:
-    st.session_state["messages"] = [Message(actor=ASSISTANT, payload="Hi! How can I help you?")]
+user_prompt = st.chat_input("Enter a prompt here")
 
-# Clear chat history when the button is pressed
+if user_prompt is not None:
+    st.session_state.messages.append({"role":"user",
+                                      "content":user_prompt})
+    
+    with st.chat_message("user"):
+        st.write(user_prompt)
+
+if st.session_state.messages[-1]["role"] != "assistant":
+    with st.chat_message("assistant"):
+        with st.spinner("Please wait..."):
+            ai_response = run_chain(chain,user_prompt)
+            # Display each found image
+            matches = re.findall(pattern, ai_response)
+            for match in matches:
+                st.image(base_url + match)
+            matches = re.findall(pattern, ai_response)
+            st.write(ai_response)
+    
+    new_ai_message = {"role":"assistant","content":ai_response}
+    st.session_state.messages.append(new_ai_message)
+
 if st.sidebar.button("Clear Chat"):
-    st.session_state["messages"] = [Message(actor=ASSISTANT, payload="Hi! How can I help you?")]
-
-# initialize_session_state()
-
-# Display chat history
-msg: Message
-for msg in st.session_state["messages"]:
-    st.chat_message(msg.actor).write(msg.payload)
-
-# Prompt
-query: str = st.chat_input("Enter a prompt here")
-if query:
-    st.session_state["messages"].append(Message(actor=USER, payload=str(query)))
-    st.chat_message(USER).write(query)
-
-    with st.spinner("Please wait..."):
-        response = run_chain(chain,query)
-        st.session_state["messages"].append(Message(actor=ASSISTANT, payload=response))
-        st.chat_message(ASSISTANT).write(response) 
+    st.session_state["messages"] = [
+        {"role":"assistant","content":"Hello, how can i help you today?"}]
 
 st.sidebar.markdown(''' 
 ## Created by: 
 Ahmad Luay Adnani - [GitHub](https://github.com/ahmadluay9) 
 ''')
-        # response = requests.get(f"{BASE_URL}/fetch/{user_option}")
-#         # response.raise_for_status()  # Raise an HTTPError on bad status
-#         # data = response.json()
-#         st.write("Fetched Data")
-#         st.dataframe(df)
-#     except requests.RequestException as e:
-#         st.error(f"Error fetching data: {e}")
-# else:
-#     try:
-#         df = fetch_data(user_option)
-#         # response.raise_for_status()  # Raise an HTTPError on bad status
-#         # data = response.json()
-#         st.write("Fetched Data")
-#         st.dataframe(df)
-#     except requests.RequestException as e:
-#         st.error(f"Error fetching data: {e}")
-
-
-# if user:  # Check if user choice is not empty
-#     try:
-#         df = fetch_data(user)
-#         if df is not None:
-#             # Vector DB
-#             vectorstore  = FAISS.from_documents(loader(df), model_embedding())
-#             conversation_chain()
-
-
-#         st.dataframe(df)
-
-#     except ValueError as e:
-#         st.write(e)
-
-# Constants for chat actors
-# USER = "user"
-# ASSISTANT = "assistant"
-
-# setup_chain()
-
-# @dataclass
-# class Message:
-#     actor: str
-#     payload: str
-
-# # Initialize session state
-# def initialize_session_state():
-#     if "messages" not in st.session_state:
-#         st.session_state["messages"] = [Message(actor=ASSISTANT, payload="Hi! How can I help you?")]
-
-# initialize_session_state()
-
-# # Display chat history
-# msg: Message
-# for msg in st.session_state["messages"]:
-#     st.chat_message(msg.actor).write(msg.payload)
-
-# # Prompt
-# query: str = st.chat_input("Enter a prompt here")
-# if query:
-#     st.session_state["messages"].append(Message(actor=USER, payload=str(query)))
-#     st.chat_message(USER).write(query)
-
-#     with st.spinner("Please wait..."):
-#         try:
-#             payload = {"user": f"{user_option}", "query": query}  
-#             response = requests.post(f"{BASE_URL}/recommend/", json=payload)
-#             response.raise_for_status()  # Raise an HTTPError on bad status
-#             result = response.json()
-#             response_text = result['result']
-#         except requests.RequestException as e:
-#             response_text = f"Error getting recommendation: {e}"
-
-#         st.session_state["messages"].append(Message(actor=ASSISTANT, payload=response_text))
-#         st.chat_message(ASSISTANT).write(response_text) 
-    
-
-
 

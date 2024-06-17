@@ -4,7 +4,7 @@ import pandas as pd
 import tiktoken
 from dotenv import load_dotenv
 
-from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQA, ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.document_loaders import DataFrameLoader
@@ -118,21 +118,24 @@ def model_embedding():
 )
     return embeddings
 
-def setup_chain(openai_api_key, df):
+def setup_chain(df):
     # Vector DB
+    openai_api_key = OPENAI_API_KEY
     vectorstore  = FAISS.from_documents(loader(df), model_embedding())
-
+    llm = ChatOpenAI(openai_api_key=openai_api_key, 
+                    model_name="gpt-3.5-turbo",
+                    temperature=0)
     MOVIE_TVSHOW_QUESTION_CREATOR_TEMPLATE = """
     You are a movie recommender system. 
     From the following context and chat history about movies or TV shows, help users to find movie or tv shows that match their preferences.
-    For example, if the user requests a Movie/ TV show recommendation, recommend 3 movie/ tv shows sort by popularity with the following format: 
+    For example, if the user requests a Movie/ TV show recommendation, recommend only 1 newly released or aired movie / tv shows with the following format: 
     Here are our recommendation:
-    1.  - Title
-        - Release Date / First Aired
-        - Genre
-        - Popularity
-        - Overview
-        - Poster Path
+    1.  - Title:
+        - Release Date / First Aired:
+        - Genre:
+        - Popularity:
+        - Overview:
+        - Poster Path:
 
     You shouldn't change the language of the question, just reformulate it. If it is not needed to reformulate the question or it is not a question, just output the same text.
        
@@ -146,9 +149,8 @@ def setup_chain(openai_api_key, df):
     prompt = PromptTemplate.from_template(MOVIE_TVSHOW_QUESTION_CREATOR_TEMPLATE)
     # Set up the memory
     memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", return_messages=True)
-    chain = RetrievalQA.from_chain_type(
-                llm=ChatOpenAI(openai_api_key=openai_api_key, 
-                        model_name="gpt-3.5-turbo", temperature=0),
+    qa_chain =  RetrievalQA.from_chain_type(
+                llm=llm,
                 retriever=vectorstore.as_retriever(),
                 chain_type_kwargs={
         "verbose": True,
@@ -156,8 +158,23 @@ def setup_chain(openai_api_key, df):
         "memory": memory},
                 verbose=True,
     )
-    return chain
+    return qa_chain
+
+    # return response.get("answer")
+    # # return chain
 
 def run_chain(chain, query):
     result = chain.run(query=query)
     return result
+
+# qa_chain =  ConversationalRetrievalChain.from_llm(
+#             llm=llm,
+#             memory = memory,
+#             condense_question_llm=llm,
+#             condense_question_prompt = prompt_template,
+#             retriever=vectorstore.as_retriever(
+#                 search_kwargs={"fetch_k":4,"k":3},search_type="mmr"
+#             ),
+#             chain_type="refine",
+#             verbose=True
+    # )
