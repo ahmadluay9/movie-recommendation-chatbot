@@ -48,10 +48,11 @@ else:
 
 st.write('---')
 
-df = fetch_data(user_option)
-loader(df)
-model_embedding()
-chain = setup_chain(df)
+if OPENAI_API_KEY and TMDB_API_KEY:
+    df = fetch_data(user_option,TMDB_API_KEY)
+    loader(df)
+    model_embedding()
+    chain = setup_chain(df,OPENAI_API_KEY)
 
 # set initial message
 if "messages" not in st.session_state.keys():

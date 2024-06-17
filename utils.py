@@ -12,10 +12,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
 
-OPENAI_API_KEY = ""
-TMDB_API_KEY = ""
-
-def fetch_data(user):
+def fetch_data(user,TMDB_API_KEY):
     if user == 'movie':
         url = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
         info_columns = ['title', 'release_date', 'genre', 'poster_path','popularity','overview']
@@ -113,7 +110,7 @@ def model_embedding():
 )
     return embeddings
 
-def setup_chain(df):
+def setup_chain(df,OPENAI_API_KEY):
     # Vector DB
     openai_api_key = OPENAI_API_KEY
     vectorstore  = FAISS.from_documents(loader(df), model_embedding())
