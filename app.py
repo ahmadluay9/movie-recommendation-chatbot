@@ -9,10 +9,6 @@ import re
 # Load environment variables from .env
 load_dotenv()
 
-# Access the OpenAI API key
-OPENAI_API_KEY = os.getenv("MY_OPENAI_KEY")
-TMDB_API_KEY = os.getenv("TMDB_API_KEY")
-
 # Define the base URL for the images
 base_url = "https://image.tmdb.org/t/p/original/"
 
@@ -20,31 +16,43 @@ base_url = "https://image.tmdb.org/t/p/original/"
 pattern = r"Poster Path: (/[a-zA-Z0-9_/.-]+\.jpg)"
 
 # Set the page config
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Movie / TV Show Recommendation ChatBot",
+    page_icon="💬 ",
+    layout="centered",
+    initial_sidebar_state="auto",
+    menu_items={
+        'About': "#Welcome to the **Movie / TV Show Recommendation ChatBot**! This application, leveraging generative AI and data from **TMDB (the Movie Database)**, helps you discover new movies and TV shows tailored to your preferences."
+    }
+)
 
 st.sidebar.header("💬 Movie / TV Show Recommendation ChatBot")
 st.sidebar.markdown('''
         ## About
-        Welcome to the **Movie / TV Show Recommendation ChatBot**! This application helps you discover new movies and TV shows tailored to your preferences.
-        
-        By leveraging **Generative AI** and data from **TMDB (The Movie Database)**, the chatbot provides personalized recommendations based on your input queries.
-        
+        Welcome to the **Movie / TV Show Recommendation ChatBot**! This application, leveraging generative AI and data from **TMDB (the Movie Database)**, helps you discover new movies and TV shows tailored to your preferences.
+       
         Documentation:
-        - [Streamlit](https://streamlit.io/)
         - [TMDB](https://developer.themoviedb.org/docs/getting-started)
-        - [LangChain](https://python.langchain.com/)
         - [OpenAI](https://platform.openai.com/docs/models)
                  
         ''')
 
-user_option = st.sidebar.radio('Movie or TV Show ?',['Movie','TV Show'])
+# Access the OpenAI API key
+OPENAI_API_KEY = st.sidebar.text_input("Enter OpenAI API key:",type="password")
+TMDB_API_KEY = st.sidebar.text_input("Enter TMDB API key:",type="password")
 
-st.image('tmdb.jpeg',width=800)
+user_option = st.sidebar.radio('Seeking a new movie or tv show to watch?',['Movie','TV Show'])
 
 if user_option=='TV Show':
     user_option = 'tv'
+    st.header("TV Show Recommendation ChatBot")
+    
 else:
     user_option = 'movie'
+    st.header("Movie Recommendation ChatBot")
+
+st.image('tmdb.jpeg',width=450)
+st.write('---')
 
 df = fetch_data(user_option)
 loader(df)
