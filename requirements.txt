@@ -9,3 +9,4 @@ openai==0.28
 faiss-cpu==1.7.4
 streamlit==1.29.0
 requests==2.31.0
+sentence-transformers == 3.0.1

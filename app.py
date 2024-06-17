@@ -1,6 +1,5 @@
 # Import Library
 import streamlit as st
-from dataclasses import dataclass
 from utils import fetch_data, loader, model_embedding, setup_chain, run_chain
 import re
 

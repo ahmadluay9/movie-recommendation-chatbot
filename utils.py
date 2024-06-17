@@ -1,9 +1,8 @@
-import os
 import requests
 import pandas as pd
 import tiktoken
 
-from langchain.chains import RetrievalQA, ConversationalRetrievalChain
+from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.document_loaders import DataFrameLoader
