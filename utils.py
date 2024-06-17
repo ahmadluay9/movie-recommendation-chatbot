@@ -12,6 +12,9 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
 
+OPENAI_API_KEY = ""
+TMDB_API_KEY = ""
+
 def fetch_data(user):
     if user == 'movie':
         url = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
