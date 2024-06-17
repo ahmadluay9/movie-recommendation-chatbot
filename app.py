@@ -12,6 +12,10 @@ load_dotenv()
 # Define the base URL for the images
 base_url = "https://image.tmdb.org/t/p/original/"
 
+# Access the OpenAI API key
+OPENAI_API_KEY = os.getenv("MY_OPENAI_KEY")
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+
 # Use regular expression to find all jpg paths in the ai_response
 pattern = r"Poster Path: (/[a-zA-Z0-9_/.-]+\.jpg)"
 
@@ -36,10 +40,6 @@ st.sidebar.markdown('''
         - [OpenAI](https://platform.openai.com/docs/models)
                  
         ''')
-
-# Access the OpenAI API key
-OPENAI_API_KEY = st.sidebar.text_input("Enter OpenAI API key:",type="password")
-TMDB_API_KEY = st.sidebar.text_input("Enter TMDB API key:",type="password")
 
 user_option = st.sidebar.radio('Seeking a new movie or tv show to watch?',['Movie','TV Show'])
 
