@@ -23,3 +23,10 @@ This repository consists of several files :
 - `requirements.txt`: A file listing the project's dependencies. It is used by pip to install all the necessary packages specified in this file.
 
 - `utils.py`: A script containing utility functions or helper methods used by the main application
+
+## Setup
+1. Create a `.env` file containing:
+```
+    OPENAI_API_KEY=
+    TMDB_API_KEY=
+```
