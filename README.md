@@ -3,8 +3,10 @@
 ## File Explanation
 This repository consists of several files :
 ```
-    ┌── app.py
+    ┌── .gitignore
+    ├── README.md
+    ├── app.py
+    ├── notebook.ipynb
     ├── requirements.txt
-    ├── .gitignore
     └── README.md
 ```
